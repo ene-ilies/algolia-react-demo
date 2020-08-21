@@ -2,6 +2,7 @@ import { ArticleShortInfo } from './articleData';
 import * as React from 'react';
 import { Grid, TextField, GridList, GridListTile, makeStyles, Paper } from '@material-ui/core';
 import ArticleBriefCard from './articleBriefCard';
+import { useState } from 'react';
 
 interface Props {
     onSearch: (word: string) => void,
@@ -18,13 +19,16 @@ const useStyles = makeStyles({
 const ArticleSerchableList = (props: Props) => {
     const { items } = props;
     const classes = useStyles();
+    const [keyword, setKeyword] = useState('');
     const searchChangeCallback = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.onSearch(event.target.value);
+        const value = event.target.value;
+        setKeyword(value);
+        props.onSearch(value);
     }
     return (
         <Grid className={classes.root} container spacing={3} justify="center">
             <Grid item lg={9}>
-                <TextField placeholder="Search..." onChange={searchChangeCallback} fullWidth />
+                <TextField placeholder="Search..." onChange={searchChangeCallback} fullWidth value={keyword}/>
             </Grid>
             <Grid item lg={9}>
                 <Grid container spacing={3}>

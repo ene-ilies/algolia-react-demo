@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useDispatch, connect, DefaultRootState } from 'react-redux';
-import { fetchArticlesPage, ArticlesAction } from './homepage.actions';
+import { useDispatch, connect} from 'react-redux';
+import { fetchArticlesPage } from './homepage.actions';
 import { ArticleShortInfo } from '../articles/articleData';
 import * as React from 'react';
 import ArticleSerchableList from '../articles/articlesSearchableList';
