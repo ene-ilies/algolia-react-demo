@@ -5,6 +5,11 @@ import { ArticleShortInfo } from '../articles/articleData';
 import * as React from 'react';
 import ArticleSerchableList from '../articles/articlesSearchableList';
 import { Grid } from '@material-ui/core';
+import { HomePageState } from './homepage.reducer';
+
+interface HomePageReducer {
+    home: HomePageState
+};
 
 interface Props {
     items: ArticleShortInfo[]
@@ -25,7 +30,7 @@ const HomePage = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: HomePageReducer) => ({
     items: state.home.articles
 });
 
