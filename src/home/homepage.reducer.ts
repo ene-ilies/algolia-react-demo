@@ -1,20 +1,36 @@
 import { ArticleShortInfo } from '../articles/articleData';
 import { HomePageActionTypes, ArticlesAction } from './homepage.actions';
 
+export interface HomePageReducer {
+    home: HomePageState
+};
+
+export interface SearchData {
+    keyword: string,
+    articles: ArticleShortInfo[],
+    lastLoadedPage: number,
+    hasLoadMore: boolean
+}
+
 export interface HomePageState {
-    articles: ArticleShortInfo[]
+    searchData: SearchData
 }
 
 const INITIAL_STATE: HomePageState = {
-    articles: []
+    searchData: {
+        keyword: '',
+        articles: [],
+        lastLoadedPage: 0,
+        hasLoadMore: false
+    }
 };
 
 export const HomePageReducer = (state: HomePageState = INITIAL_STATE, action: ArticlesAction) => {
     switch (action.type) {
-        case HomePageActionTypes.SET_ARTICLES_PAGE:
+        case HomePageActionTypes.SET_SEARCH_DATA:
             return {
                 ...state,
-                articles: action.payload
+                searchData: action.payload
             }
         default:   
             return state;

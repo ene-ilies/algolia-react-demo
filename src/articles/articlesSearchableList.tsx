@@ -1,12 +1,14 @@
 import { ArticleShortInfo } from './articleData';
 import * as React from 'react';
-import { Grid, TextField, GridList, GridListTile, makeStyles, Paper } from '@material-ui/core';
+import { Grid, TextField, GridList, GridListTile, makeStyles, Paper, Button } from '@material-ui/core';
 import ArticleBriefCard from './articleBriefCard';
 import { useState } from 'react';
 
 interface Props {
     onSearch: (word: string) => void,
-    items: ArticleShortInfo[]
+    onLoadMore: () => void,
+    items: ArticleShortInfo[],
+    hasLoadMore: boolean
 }
 
 const useStyles = makeStyles({
@@ -25,6 +27,7 @@ const ArticleSerchableList = (props: Props) => {
         setKeyword(value);
         props.onSearch(value);
     }
+    const loadMoreCallback = () => props.onLoadMore();
     return (
         <Grid className={classes.root} container spacing={3} justify="center">
             <Grid item lg={9}>
@@ -40,6 +43,11 @@ const ArticleSerchableList = (props: Props) => {
                     )}                    
                 </Grid>
             </Grid>
+            {props.hasLoadMore &&
+                <Grid item lg={9}>
+                    <Button onClick={loadMoreCallback} fullWidth variant="contained" color="primary" >Load more</Button>
+                </Grid>
+            }
         </Grid>
     );
 };

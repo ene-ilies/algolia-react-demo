@@ -1,37 +1,35 @@
+import * as React from 'react';
 import { useEffect } from 'react';
 import { useDispatch, connect} from 'react-redux';
-import { fetchArticlesPage } from './homepage.actions';
-import { ArticleShortInfo } from '../articles/articleData';
-import * as React from 'react';
+import { newSearchForArticles, loadMoreArticles } from './homepage.actions';
 import ArticleSerchableList from '../articles/articlesSearchableList';
 import { Grid } from '@material-ui/core';
-import { HomePageState } from './homepage.reducer';
-
-interface HomePageReducer {
-    home: HomePageState
-};
+import { SearchData, HomePageReducer } from './homepage.reducer';
 
 interface Props {
-    items: ArticleShortInfo[]
+    searchData: SearchData
 };
 
 const HomePage = (props: Props) => {
     const dispatch = useDispatch();
     const executeSearch = (keyword: string) => {
-        dispatch(fetchArticlesPage(keyword, 0));
+        dispatch(newSearchForArticles(keyword));
+    };
+    const loadMore = () => {
+        dispatch(loadMoreArticles());
     };
     useEffect(() => {
-        dispatch(fetchArticlesPage('', 0));
+        dispatch(newSearchForArticles(''));
     }, []);
     return (
         <Grid>
-            <ArticleSerchableList onSearch={executeSearch} items={props.items} />
+            <ArticleSerchableList onSearch={executeSearch} onLoadMore={loadMore} items={props.searchData.articles} hasLoadMore={props.searchData.hasLoadMore} />
         </Grid>
     );
 };
 
 const mapStateToProps = (state: HomePageReducer) => ({
-    items: state.home.articles
+    searchData: state.home.searchData
 });
 
 export default connect(mapStateToProps)(HomePage);
