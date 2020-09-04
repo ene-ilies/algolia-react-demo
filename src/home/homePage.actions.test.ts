@@ -1,13 +1,13 @@
-import { ThunkDispatch } from 'redux-thunk';
-import { ArticlesAction, HomePageActionTypes, newSearchForArticles, loadMoreArticles } from './homepage.actions';
-import { ArticleShortInfo } from '../articles/articleData';
+import { ThunkDispatch, ThunkAction } from 'redux-thunk';
+import { HomePageActionTypes, newSearchForArticles, loadMoreArticles } from './homePage.actions';
+import { ArticleShortInfo, ArticlesAction } from '../articles/articleData';
 import { searchArticles } from '../infrastructure/api/articlesApi';
-import { SearchData, HomePageState, HomePageReducer } from './homepage.reducer';
+import { SearchData, HomePageReducer } from './homePage.reducer';
 
 jest.mock('../infrastructure/api/articlesApi');
 
 describe('homepage.actions', () => {
-    const dispatch: ThunkDispatch<{}, {}, ArticlesAction> = jest.fn().mockImplementation(() => {});
+    const dispatch: ThunkDispatch<{}, {}, ArticlesAction<SearchData>> = jest.fn().mockImplementation(() => {});
 
     const keyword: string = 'test';    
     const itemsPage1: ArticleShortInfo[] = [
@@ -34,7 +34,7 @@ describe('homepage.actions', () => {
     ];
 
     const homePageReducer: HomePageReducer = {
-        home: {
+        homePage: {
             searchData: {
                 keyword: keyword,
                 articles: itemsPage1,
@@ -45,7 +45,7 @@ describe('homepage.actions', () => {
     };
 
     it('that newSearchForArticles dispatches correct action on fetch success', async () => {
-        const expectedAction: ArticlesAction = {
+        const expectedAction: ArticlesAction<SearchData> = {
             type: HomePageActionTypes.SET_SEARCH_DATA,
             payload: {
                 keyword: keyword,
@@ -54,14 +54,14 @@ describe('homepage.actions', () => {
                 hasLoadMore: true
             }
         };
-        const thunkAction = newSearchForArticles(keyword);
+        const thunkAction: ThunkAction<void, HomePageReducer, {}, ArticlesAction<SearchData>> = newSearchForArticles(keyword);
         await thunkAction(dispatch, () => homePageReducer, {});
         expect(dispatch).toBeCalledWith(expectedAction);
     });
 
     it('that newSearchForArticles dispatches correct action with hasMore false when results is empty array', async () => {
         (searchArticles as jest.Mock).mockResolvedValue([]);
-        const expectedAction: ArticlesAction = {
+        const expectedAction: ArticlesAction<SearchData> = {
             type: HomePageActionTypes.SET_SEARCH_DATA,
             payload: {
                 keyword: keyword,
@@ -70,13 +70,13 @@ describe('homepage.actions', () => {
                 hasLoadMore: false
             }
         };
-        const thunkAction = newSearchForArticles(keyword);
+        const thunkAction: ThunkAction<void, HomePageReducer, {}, ArticlesAction<SearchData>> = newSearchForArticles(keyword);
         await thunkAction(dispatch, () => homePageReducer, {});
         expect(dispatch).toBeCalledWith(expectedAction);
     });
 
     it('that newSearchForArticles dispatches correct action on fetch failure', async () => {
-        const expectedAction: ArticlesAction = {
+        const expectedAction: ArticlesAction<SearchData> = {
             type: HomePageActionTypes.SET_SEARCH_DATA,
             payload: {
                 keyword: '',
@@ -86,7 +86,7 @@ describe('homepage.actions', () => {
             }
         };
         (searchArticles as jest.Mock).mockImplementation(() => {throw new Error();});
-        const thunkAction = newSearchForArticles(keyword);
+        const thunkAction: ThunkAction<void, HomePageReducer, {}, ArticlesAction<SearchData>> = newSearchForArticles(keyword);
         await thunkAction(dispatch, () => homePageReducer, {});
         expect(dispatch).toBeCalledWith(expectedAction);
     });
@@ -94,43 +94,43 @@ describe('homepage.actions', () => {
     it('that loadMoreArticles dispatches correct action on fetch success', async () => {
         (searchArticles as jest.Mock).mockResolvedValue(itemsPage2);
         (dispatch as jest.Mock).mockReset();
-        const expectedAction: ArticlesAction = {
+        const expectedAction: ArticlesAction<SearchData> = {
             type: HomePageActionTypes.SET_SEARCH_DATA,
             payload: {
                 keyword: keyword,
                 articles: [...itemsPage1, ...itemsPage2],
-                lastLoadedPage: homePageReducer.home.searchData.lastLoadedPage + 1,
+                lastLoadedPage: homePageReducer.homePage.searchData.lastLoadedPage + 1,
                 hasLoadMore: true
             }
         };
-        const thunkAction = loadMoreArticles();
+        const thunkAction: ThunkAction<void, HomePageReducer, {}, ArticlesAction<SearchData>> = loadMoreArticles();
         await thunkAction(dispatch, () => homePageReducer, {});
-        expect(searchArticles).toBeCalledWith(homePageReducer.home.searchData.keyword, homePageReducer.home.searchData.lastLoadedPage + 1);
+        expect(searchArticles).toBeCalledWith(homePageReducer.homePage.searchData.keyword, homePageReducer.homePage.searchData.lastLoadedPage + 1);
         expect(dispatch).toBeCalledWith(expectedAction);
     });
 
     it('that loadMoreArticles dispatches correct action with hasMore false when results is empty array', async () => {
         (searchArticles as jest.Mock).mockResolvedValue([]);
         (dispatch as jest.Mock).mockReset();
-        const expectedAction: ArticlesAction = {
+        const expectedAction: ArticlesAction<SearchData> = {
             type: HomePageActionTypes.SET_SEARCH_DATA,
             payload: {
                 keyword: keyword,
                 articles: itemsPage1,
-                lastLoadedPage: homePageReducer.home.searchData.lastLoadedPage + 1,
+                lastLoadedPage: homePageReducer.homePage.searchData.lastLoadedPage + 1,
                 hasLoadMore: false
             }
         };
-        const thunkAction = loadMoreArticles();
+        const thunkAction: ThunkAction<void, HomePageReducer, {}, ArticlesAction<SearchData>> = loadMoreArticles();
         await thunkAction(dispatch, () => homePageReducer, {});
-        expect(searchArticles).toBeCalledWith(homePageReducer.home.searchData.keyword, homePageReducer.home.searchData.lastLoadedPage + 1);
+        expect(searchArticles).toBeCalledWith(homePageReducer.homePage.searchData.keyword, homePageReducer.homePage.searchData.lastLoadedPage + 1);
         expect(dispatch).toBeCalledWith(expectedAction);
     });
 
     it('that loadMoreArticles dispatches correct action on fetch failure', async () => {
         (searchArticles as jest.Mock).mockImplementation(() => {throw new Error();});
         (dispatch as jest.Mock).mockReset();
-        const thunkAction = loadMoreArticles();
+        const thunkAction: ThunkAction<void, HomePageReducer, {}, ArticlesAction<SearchData>> = loadMoreArticles();
         await thunkAction(dispatch, () => homePageReducer, {});
         expect(dispatch).not.toBeCalled();
     });

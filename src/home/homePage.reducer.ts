@@ -1,8 +1,8 @@
-import { ArticleShortInfo } from '../articles/articleData';
-import { HomePageActionTypes, ArticlesAction } from './homepage.actions';
+import { ArticleShortInfo, ArticlesAction } from '../articles/articleData';
+import { HomePageActionTypes } from './homePage.actions';
 
 export interface HomePageReducer {
-    home: HomePageState
+    homePage: HomePageState
 };
 
 export interface SearchData {
@@ -25,7 +25,7 @@ const INITIAL_STATE: HomePageState = {
     }
 };
 
-export const HomePageReducer = (state: HomePageState = INITIAL_STATE, action: ArticlesAction) => {
+export const HomePageReducer = (state: HomePageState = INITIAL_STATE, action: ArticlesAction<SearchData>) => {
     switch (action.type) {
         case HomePageActionTypes.SET_SEARCH_DATA:
             return {

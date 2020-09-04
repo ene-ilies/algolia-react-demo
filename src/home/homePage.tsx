@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useDispatch, connect} from 'react-redux';
-import { newSearchForArticles, loadMoreArticles } from './homepage.actions';
+import { newSearchForArticles, loadMoreArticles } from './homePage.actions';
 import ArticleSerchableList from '../articles/articlesSearchableList';
 import { Grid } from '@material-ui/core';
-import { SearchData, HomePageReducer } from './homepage.reducer';
+import { SearchData, HomePageReducer } from './homePage.reducer';
+import { ThunkDispatch } from 'redux-thunk';
+import { ArticlesAction } from '../articles/articleData';
 
 interface Props {
     searchData: SearchData
 };
 
 const HomePage = (props: Props) => {
-    const dispatch = useDispatch();
+    const dispatch: ThunkDispatch<HomePageReducer, {}, ArticlesAction<SearchData>> = useDispatch();
     const executeSearch = (keyword: string) => {
         dispatch(newSearchForArticles(keyword));
     };
@@ -29,7 +31,7 @@ const HomePage = (props: Props) => {
 };
 
 const mapStateToProps = (state: HomePageReducer) => ({
-    searchData: state.home.searchData
+    searchData: state.homePage.searchData
 });
 
 export default connect(mapStateToProps)(HomePage);

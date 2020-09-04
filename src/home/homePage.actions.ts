@@ -1,18 +1,13 @@
-import { Action } from 'redux';
-import { ArticleShortInfo } from '../articles/articleData';
+import { ArticleShortInfo, ArticlesAction } from '../articles/articleData';
 import { ThunkDispatch, ThunkAction } from 'redux-thunk';
 import { searchArticles } from '../infrastructure/api/articlesApi';
-import { SearchData, HomePageState, HomePageReducer } from './homepage.reducer';
+import { SearchData, HomePageState, HomePageReducer } from './homePage.reducer';
 
 export const HomePageActionTypes = {
     SET_SEARCH_DATA: 'SET_SEARCH_DATA'
 }
 
-export interface ArticlesAction extends Action<string> {
-    payload: SearchData
-}
-
-const setSearchData = (searchData: SearchData): ArticlesAction => ({
+const setSearchData = (searchData: SearchData): ArticlesAction<SearchData> => ({
     type: HomePageActionTypes.SET_SEARCH_DATA,
     payload: searchData
 });
@@ -21,8 +16,8 @@ const hasMorePages = (articles: ArticleShortInfo[]): boolean => {
     return articles.length > 0;
 }
 
-export const newSearchForArticles = (word: string): ThunkAction<void, HomePageReducer, {}, ArticlesAction> => {
-    return async (dispatch: ThunkDispatch<HomePageReducer, {}, ArticlesAction>) => {
+export const newSearchForArticles = (word: string): ThunkAction<void, HomePageReducer, {}, ArticlesAction<SearchData>> => {
+    return async (dispatch: ThunkDispatch<HomePageReducer, {}, ArticlesAction<SearchData>>) => {
         try {
             const page: number = 0;
             const articles: ArticleShortInfo[] = await searchArticles(word, page);
@@ -45,10 +40,10 @@ export const newSearchForArticles = (word: string): ThunkAction<void, HomePageRe
     };
 };
 
-export const loadMoreArticles = (): ThunkAction<void, HomePageReducer, {}, ArticlesAction> => {
-    return async (dispatch: ThunkDispatch<HomePageReducer, {}, ArticlesAction>, getState: () => HomePageReducer) => {
+export const loadMoreArticles = (): ThunkAction<void, HomePageReducer, {}, ArticlesAction<SearchData>> => {
+    return async (dispatch: ThunkDispatch<HomePageReducer, {}, ArticlesAction<SearchData>>, getState: () => HomePageReducer) => {
         try {
-            const currentState: HomePageState = getState().home;
+            const currentState: HomePageState = getState().homePage;
             const page: number = currentState.searchData.lastLoadedPage + 1;
             const word: string = currentState.searchData.keyword;
             const existingArticles: ArticleShortInfo[] = currentState.searchData.articles;

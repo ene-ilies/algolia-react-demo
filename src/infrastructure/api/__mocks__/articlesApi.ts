@@ -1,4 +1,4 @@
-import { ArticleShortInfo } from '../../../articles/articleData';
+import { ArticleShortInfo, ArticleDetailedInfo } from '../../../articles/articleData';
 
 const items: ArticleShortInfo[] = [
     {
@@ -16,3 +16,12 @@ const items: ArticleShortInfo[] = [
 ];
 
 export const searchArticles = jest.fn().mockReturnValue(items);
+
+export const getArticle = jest.fn().mockImplementation(id => ({
+    id: id,
+    createdAt: new Date(1520999430 * 1000),
+    title: 'title',
+    author: 'author',
+    url: 'https://www.bbc.com/news/uk-43396008',
+    text: 'content'
+}));
