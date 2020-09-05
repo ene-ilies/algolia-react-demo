@@ -15,7 +15,7 @@ describe('articleDetailsPage.actions', () => {
     };
 
     it('that fetchArticle dispatches correct action on fetch success', async () => {
-        const expectedAction: ArticlesAction<ArticleDetailedInfo> = {
+        const dataAction: ArticlesAction<ArticleDetailedInfo> = {
             type: ArticleDetailsPageActionTypes.SET_ARTICLE_DATA,
             payload: {
                 id: id,
@@ -26,16 +26,23 @@ describe('articleDetailsPage.actions', () => {
                 text: 'content'
             }
         };
+        const clearAction: ArticlesAction<ArticleDetailedInfo> = {
+            type: ArticleDetailsPageActionTypes.SET_ARTICLE_DATA
+        };
         const thunkAction: ThunkAction<void, ArticleDetailsPageReducer, {}, ArticlesAction<ArticleDetailedInfo>> = fetchArticle(id);
         await thunkAction(dispatch, () => articleDetailsPageReducer, {});
-        expect(dispatch).toBeCalledWith(expectedAction);
+        expect(dispatch).toBeCalledWith(clearAction);
+        expect(dispatch).toBeCalledWith(dataAction);
     });
 
     it('that fetchArticle dispatches no action on fetch failure', async () => {
         (dispatch as jest.Mock).mockReset();
         (getArticle as jest.Mock).mockRejectedValue('API is down.');
+        const clearAction: ArticlesAction<ArticleDetailedInfo> = {
+            type: ArticleDetailsPageActionTypes.SET_ARTICLE_DATA
+        };
         const thunkAction: ThunkAction<void, ArticleDetailsPageReducer, {}, ArticlesAction<ArticleDetailedInfo>> = fetchArticle(id);
         await thunkAction(dispatch, () => articleDetailsPageReducer, {});
-        expect(dispatch).not.toBeCalled();
+        expect(dispatch).toBeCalledWith(clearAction);
     });
 });

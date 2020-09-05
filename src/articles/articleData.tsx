@@ -17,5 +17,5 @@ export interface ArticleDetailedInfo {
 };
 
 export interface ArticlesAction<T> extends Action<string> {
-    payload: T
+    payload?: T
 }
